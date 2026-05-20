@@ -593,7 +593,7 @@
       <li><div class="dot check"></div>Kostnader / ressurser</li>
       <li><div class="dot check"></div>Risiko og avhengigheter</li>
     </ul>
-    <p class="note">⚠️ Hvert punkt skal inneholde <strong>refleksjon, læring og antakelser</strong> – ikke bare status.</p>
+    <p class="note">⚠️ Hvert punkt skal inneholde <strong>refleksjon, læring og antagelser</strong> – ikke bare status.</p>
   </div>
 
   <!-- 3. Produktgjennomganger -->
@@ -787,6 +787,7 @@
   document.addEventListener('click', function (e) {
     if (!e.target.closest('.gate') && !e.target.closest('.phase')) {
       closeAllGates();
+      closePhase();
     }
   });
 </script>
