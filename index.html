@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rammeverk for reflektert produktutvikling</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;1,9..40,300&display=swap');
+
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f5f1eb;
+    --accent: #c4613a;
+    --sage: #5a7c6a;
+    --slate: #4a5568;
+    --gold: #c9a84c;
+    --phase-1: #8b6bb1;
+    --phase-2: #4a90c4;
+    --phase-3: #5aaa8a;
+    --phase-4: #c4613a;
+    --phase-5: #c9a84c;
+    --phase-6: #7a8a8a;
+    --tight-color: #8b6bb1;
+    --loose-color: #4a90c4;
+    --tight2-color: #c9a84c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='1' cy='1' r='0.4' fill='%231a1a1a' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    margin-bottom: 48px;
+    border-bottom: 1px solid rgba(26,26,26,0.12);
+    padding-bottom: 32px;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(30px, 5vw, 50px);
+    line-height: 1.08;
+    color: var(--ink);
+    max-width: 640px;
+  }
+
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .header-meta {
+    display: flex;
+    gap: 28px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--slate);
+    text-transform: uppercase;
+  }
+
+  /* ── TLT INTRO ── */
+  .tlt-intro {
+    margin-bottom: 48px;
+  }
+
+  .tlt-bar {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 3px;
+    margin-bottom: 16px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .tlt-zone {
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .tlt-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    color: white;
+  }
+
+  .tlt-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    color: white;
+    line-height: 1.1;
+  }
+
+  .tlt-desc {
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.5;
+    margin-top: 2px;
+  }
+
+  .tlt-phases {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.6);
+    margin-top: 6px;
+  }
+
+  .zone-tight1 { background: var(--tight-color); }
+  .zone-loose  { background: var(--loose-color); }
+  .zone-tight2 { background: var(--tight2-color); }
+
+  .tlt-note {
+    font-size: 12.5px;
+    color: #666;
+    line-height: 1.6;
+    padding: 10px 16px;
+    background: rgba(26,26,26,0.03);
+    border-radius: 8px;
+    border-left: 3px solid rgba(26,26,26,0.1);
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(26,26,26,0.1);
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    background: rgba(196,97,58,0.08);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  /* ── PIPELINE ── */
+  .pipeline-section { margin-bottom: 64px; }
+
+  .pipeline-wrap {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 0;
+  }
+
+  /* Zone column on the left */
+  .zone-col {
+    display: flex;
+    flex-direction: column;
+    padding-top: 2px;
+  }
+
+  .zone-band {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px 0 0 8px;
+    padding: 8px 6px;
+    text-align: center;
+    gap: 6px;
+    position: relative;
+  }
+
+  .zone-band-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: white;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    opacity: 0.9;
+  }
+
+  .zone-band-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 13px;
+    color: white;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    line-height: 1.1;
+  }
+
+  .zone-spacer { flex: 0 0 28px; } /* matches connector height */
+
+  .zb-tight1 { background: var(--tight-color); flex: 1; }
+  .zb-loose  { background: var(--loose-color); flex: 3; margin-top: 3px; }
+  .zb-tight2 { background: var(--tight2-color); flex: 1; margin-top: 3px; }
+
+  /* Pipeline phases */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .pipeline::before {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 56px;
+    bottom: 56px;
+    width: 2px;
+    background: linear-gradient(to bottom,
+      var(--phase-1) 0%,
+      var(--phase-2) 25%,
+      var(--phase-3) 45%,
+      var(--phase-4) 65%,
+      var(--phase-5) 85%,
+      var(--phase-6) 100%);
+    opacity: 0.2;
+  }
+
+  .phase-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 18px;
+    align-items: start;
+    padding: 5px 0;
+    position: relative;
+    opacity: 0;
+    transform: translateX(-10px);
+    animation: slideIn 0.4s ease forwards;
+  }
+
+  .phase-row:nth-child(1) { animation-delay: 0.05s; }
+  .phase-row:nth-child(3) { animation-delay: 0.1s; }
+  .phase-row:nth-child(5) { animation-delay: 0.15s; }
+  .phase-row:nth-child(7) { animation-delay: 0.2s; }
+  .phase-row:nth-child(9) { animation-delay: 0.25s; }
+  .phase-row:nth-child(11) { animation-delay: 0.3s; }
+
+  @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+
+  .phase-connector {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 18px;
+    align-items: center;
+    height: 28px;
+  }
+
+  .connector-body {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-left: 4px;
+  }
+
+  .connector-arrows {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #bbb;
+  }
+
+  .connector-label {
+    font-size: 10.5px;
+    color: #bbb;
+    font-style: italic;
+  }
+
+  .connector-gate { width: 86px; flex-shrink: 0; }
+
+  .phase-number {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .phase-row:hover .phase-number {
+    transform: scale(1.06);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  }
+
+  .phase-card {
+    background: white;
+    border-radius: 10px;
+    padding: 16px 20px;
+    border: 1px solid rgba(26,26,26,0.07);
+    transition: box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .phase-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .phase-row:hover .phase-card { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  .phase-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    color: var(--ink);
+  }
+
+  .phase-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    opacity: 0.85;
+    flex-shrink: 0;
+  }
+
+  .phase-desc {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #555;
+    margin-bottom: 10px;
+  }
+
+  .phase-subs {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(26,26,26,0.06);
+  }
+
+  .phase-sub {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.45;
+  }
+
+  .sub-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+    opacity: 0.45;
+  }
+
+  /* Gate column */
+  .gate-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 86px;
+    flex-shrink: 0;
+    padding-top: 4px;
+  }
+
+  .gate-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--slate);
+    text-align: center;
+    margin-bottom: 2px;
+  }
+
+  .gate-decisions {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+  }
+
+  .decision-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    padding: 4px 8px;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .chip-continue { background: #e8f5ee; color: #2d7a4f; }
+  .chip-adjust   { background: #fff5e6; color: #c07a1a; }
+  .chip-stop     { background: #fdecea; color: #c0392b; }
+
+  /* Phase colors */
+  .p1 .phase-number { background: var(--phase-1); }
+  .p1 .phase-card::before { background: var(--phase-1); }
+  .p1 .phase-tag { background: rgba(139,107,177,0.1); color: var(--phase-1); }
+
+  .p2 .phase-number { background: var(--phase-2); }
+  .p2 .phase-card::before { background: var(--phase-2); }
+  .p2 .phase-tag { background: rgba(74,144,196,0.1); color: var(--phase-2); }
+
+  .p3 .phase-number { background: var(--phase-3); }
+  .p3 .phase-card::before { background: var(--phase-3); }
+  .p3 .phase-tag { background: rgba(90,170,138,0.1); color: var(--phase-3); }
+
+  .p4 .phase-number { background: var(--phase-4); }
+  .p4 .phase-card::before { background: var(--phase-4); }
+  .p4 .phase-tag { background: rgba(196,97,58,0.1); color: var(--phase-4); }
+
+  .p5 .phase-number { background: var(--phase-5); }
+  .p5 .phase-card::before { background: var(--phase-5); }
+  .p5 .phase-tag { background: rgba(201,168,76,0.1); color: var(--phase-5); }
+
+  .p6 .phase-number { background: var(--phase-6); }
+  .p6 .phase-card::before { background: var(--phase-6); }
+  .p6 .phase-tag { background: rgba(122,138,138,0.1); color: var(--phase-6); }
+
+  /* Pensjonere as side note */
+  .pensjonere-note {
+    margin-top: 16px;
+    padding: 12px 18px;
+    background: rgba(122,138,138,0.07);
+    border: 1px solid rgba(122,138,138,0.2);
+    border-radius: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 12.5px;
+    color: #555;
+    line-height: 1.55;
+  }
+
+  .pensjonere-note-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .pensjonere-note strong {
+    display: block;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 3px;
+    font-size: 13px;
+  }
+
+  /* ── TWO-COL ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 64px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.5s forwards;
+  }
+
+  @media (max-width: 700px) {
+    .two-col { grid-template-columns: 1fr; }
+    .pipeline-wrap { grid-template-columns: 60px 1fr; }
+    .phase-row { grid-template-columns: 48px 1fr; }
+    .gate-col { display: none; }
+    .tlt-bar { grid-template-columns: 1fr; }
+    .pipeline::before { left: 24px; }
+    .phase-number { width: 48px; height: 48px; font-size: 12px; }
+    .zone-band-title, .zone-band-label { writing-mode: horizontal-tb; transform: none; }
+    .zone-band { flex-direction: row; border-radius: 8px 8px 0 0; }
+    .zb-loose, .zb-tight2 { margin-top: 0; margin-left: 3px; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .retning-section {
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.6s forwards;
+  }
+
+  /* ── UNDERLAG ── */
+  .underlag-card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid rgba(26,26,26,0.07);
+    overflow: hidden;
+  }
+
+  .underlag-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 16px 20px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+  }
+
+  .underlag-items { padding: 8px 0; }
+
+  .underlag-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(26,26,26,0.05);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .underlag-item:last-child { border-bottom: none; }
+  .underlag-item-body { flex: 1; }
+
+  .underlag-item-title {
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 5px;
+    font-size: 13px;
+  }
+
+  .underlag-subs {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .underlag-sub {
+    font-size: 11.5px;
+    color: #777;
+    line-height: 1.45;
+    padding-left: 10px;
+    position: relative;
+  }
+
+  .underlag-sub::before { content: '–'; position: absolute; left: 0; color: #bbb; }
+
+  .underlag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .underlag-note {
+    background: rgba(196,97,58,0.06);
+    border-left: 2px solid var(--accent);
+    padding: 12px 20px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #664433;
+    font-style: italic;
+  }
+
+  /* ── GJENNOMGANG ── */
+  .gjennomgang-card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid rgba(26,26,26,0.07);
+    overflow: hidden;
+    height: 100%;
+  }
+
+  .gjennomgang-header {
+    background: var(--sage);
+    color: white;
+    padding: 16px 20px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+  }
+
+  .agenda-list { padding: 16px 20px; }
+
+  .agenda-item {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .agenda-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--sage);
+    font-weight: 500;
+    flex-shrink: 0;
+    width: 18px;
+  }
+
+  .agenda-text { font-size: 13.5px; line-height: 1.5; color: var(--ink); }
+  .agenda-text strong { font-weight: 500; display: block; margin-bottom: 2px; }
+  .agenda-text span { font-size: 12px; color: #666; }
+
+  .principles {
+    padding: 12px 20px;
+    border-top: 1px solid rgba(26,26,26,0.06);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .principle-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(90,124,106,0.1);
+    color: var(--sage);
+  }
+
+  /* ── RETNING & VERDI ── */
+  .retning-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 680px) { .retning-top { grid-template-columns: 1fr; } }
+
+  .retning-card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid rgba(26,26,26,0.07);
+    overflow: hidden;
+  }
+
+  .retning-card-header {
+    padding: 14px 20px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(26,26,26,0.06);
+  }
+
+  .retning-card-body {
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sporsmal { display: flex; gap: 10px; align-items: flex-start; }
+
+  .sporsmal-mark {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .sporsmal-text { font-size: 13px; line-height: 1.5; color: var(--ink); }
+
+  .sporsmal-text em {
+    font-style: normal;
+    font-size: 11.5px;
+    color: #888;
+    display: block;
+    margin-top: 1px;
+  }
+
+  .rv-retning .retning-card-header { background: rgba(74,144,196,0.07); color: #2a6090; }
+  .rv-verdi   .retning-card-header { background: rgba(90,170,138,0.07); color: #2d7a5a; }
+
+  /* Exit note — compact */
+  .exit-compact {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid rgba(26,26,26,0.07);
+    padding: 16px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .exit-compact-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 8px;
+    flex-basis: 100%;
+  }
+
+  .exit-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    color: #555;
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .exit-chip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .exit-chip-text strong {
+    font-weight: 500;
+    color: var(--ink);
+    display: block;
+    font-size: 12.5px;
+  }
+
+  .exit-chip-text span { font-size: 11.5px; color: #888; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="eyebrow">Internt rammeverk · Produktutvikling</div>
+    <h1>Rammeverk for<br><em>reflektert</em> produktutvikling</h1>
+    <div class="header-meta">
+      <span class="meta-item">Tight–Loose–Tight</span>
+      <span class="meta-item">Ikke-lineær</span>
+      <span class="meta-item">Beslutningspunkter</span>
+      <span class="meta-item">Tverrfaglig</span>
+    </div>
+  </header>
+
+  <!-- TLT INTRO -->
+  <div class="tlt-intro">
+    <div class="tlt-bar">
+      <div class="tlt-zone zone-tight1">
+        <div class="tlt-label">Tight</div>
+        <div class="tlt-title">Forstå og forankre</div>
+        <div class="tlt-desc">Tydelig problem, mål og retning settes av organisasjonen i fellesskap. Ledelse er tett på.</div>
+        <div class="tlt-phases">→ Fase 1: Forstå</div>
+      </div>
+      <div class="tlt-zone zone-loose">
+        <div class="tlt-label">Loose</div>
+        <div class="tlt-title">Utforsk, test og lever</div>
+        <div class="tlt-desc">Teamet har autonomi til å finne veien. Ledelse holder fast på <em style="font-style:italic">hvorfor</em>, men slipper kontrollen på <em style="font-style:italic">hvordan</em>. Discovery stopper ikke når bygging starter.</div>
+        <div class="tlt-phases">→ Fase 2–4: Utforske · Bekrefte · Bygge</div>
+      </div>
+      <div class="tlt-zone zone-tight2">
+        <div class="tlt-label">Tight</div>
+        <div class="tlt-title">Vurder kurs og verdi</div>
+        <div class="tlt-desc">Teamet kobles til organisasjonen igjen. Er vi fortsatt på rett kurs? Skaper vi faktisk verdi?</div>
+        <div class="tlt-phases">→ Fase 5: Forvalte</div>
+      </div>
+    </div>
+    <div class="tlt-note">
+      Syklusen gjentas. Etter en Tight-vurdering starter en ny runde med Forstå eller man justerer kursen inn i neste Loose. Fasene er ikke lineære — bevegelse frem og tilbake er læring, ikke feil.
+    </div>
+  </div>
+
+  <!-- 1. MODENHETSSKALA -->
+  <section class="pipeline-section">
+    <div class="section-title">
+      <span class="section-num">01</span>
+      Modenhetsskala med beslutningspunkter
+    </div>
+
+    <div class="pipeline-wrap">
+      <!-- Zone sidebar -->
+      <div class="zone-col">
+        <div class="zone-band zb-tight1">
+          <div class="zone-band-label">Tight</div>
+          <div class="zone-band-title">Forstå</div>
+        </div>
+        <div class="zone-spacer"></div>
+        <div class="zone-band zb-loose">
+          <div class="zone-band-label">Loose</div>
+          <div class="zone-band-title">Utforsk &amp; lever</div>
+        </div>
+        <div class="zone-spacer"></div>
+        <div class="zone-band zb-tight2">
+          <div class="zone-band-label">Tight</div>
+          <div class="zone-band-title">Vurder</div>
+        </div>
+      </div>
+
+      <!-- Phases -->
+      <div class="pipeline">
+
+        <div class="phase-row p1">
+          <div class="phase-number">01</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-name">Forstå problem</div>
+              <div class="phase-tag">Analyse</div>
+            </div>
+            <div class="phase-desc">Avklar problem, målgruppe og ønsket effekt.</div>
+            <div class="phase-subs">
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-1)"></div>Hvem har problemet, og hva er konsekvensen for dem?</div>
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-1)"></div>Hva er ønsket effekt — ikke løsning, men endring i situasjon?</div>
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-1)"></div>Hva vet vi, hva antar vi, og hva vet vi ikke?</div>
+            </div>
+          </div>
+          <div class="gate-col">
+            <div class="gate-label">Beslutning</div>
+            <div class="gate-decisions">
+              <div class="decision-chip chip-continue">Fortsett</div>
+              <div class="decision-chip chip-adjust">Juster</div>
+              <div class="decision-chip chip-stop">Stopp</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-connector">
+          <div></div>
+          <div class="connector-body">
+            <span class="connector-arrows">⇅</span>
+            <span class="connector-label">kan gå tilbake</span>
+          </div>
+          <div class="connector-gate"></div>
+        </div>
+
+        <div class="phase-row p2">
+          <div class="phase-number">02</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-name">Utforske</div>
+              <div class="phase-tag">Innsikt</div>
+            </div>
+            <div class="phase-desc">Kartlegg mulige løsningsretninger.</div>
+            <div class="phase-subs">
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-2)"></div>Hvilke ulike tilnærminger finnes — inkludert å ikke bygge noe?</div>
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-2)"></div>Hva gjør andre med lignende problem?</div>
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-2)"></div>Hvilke retninger er verdt å teste videre?</div>
+            </div>
+          </div>
+          <div class="gate-col">
+            <div class="gate-label">Beslutning</div>
+            <div class="gate-decisions">
+              <div class="decision-chip chip-continue">Fortsett</div>
+              <div class="decision-chip chip-adjust">Juster</div>
+              <div class="decision-chip chip-stop">Stopp</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-connector">
+          <div></div>
+          <div class="connector-body">
+            <span class="connector-arrows">⇅</span>
+            <span class="connector-label">kan gå tilbake</span>
+          </div>
+          <div class="connector-gate"></div>
+        </div>
+
+        <div class="phase-row p3">
+          <div class="phase-number">03</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-name">Bekrefte</div>
+              <div class="phase-tag">Validering</div>
+            </div>
+            <div class="phase-desc">Test hypoteser og reduser usikkerhet.</div>
+            <div class="phase-subs">
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-3)"></div>Hva er de viktigste antakelsene vi må teste?</div>
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-3)"></div>Hva er minste mulige test som gir oss svar?</div>
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-3)"></div>Hva lærte vi — bekreftet, avkreftet, eller ny usikkerhet?</div>
+            </div>
+          </div>
+          <div class="gate-col">
+            <div class="gate-label">Beslutning</div>
+            <div class="gate-decisions">
+              <div class="decision-chip chip-continue">Fortsett</div>
+              <div class="decision-chip chip-adjust">Juster</div>
+              <div class="decision-chip chip-stop">Stopp</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-connector">
+          <div></div>
+          <div class="connector-body">
+            <span class="connector-arrows">⇅</span>
+            <span class="connector-label">kan gå tilbake — discovery fortsetter inn i bygging</span>
+          </div>
+          <div class="connector-gate"></div>
+        </div>
+
+        <div class="phase-row p4">
+          <div class="phase-number">04</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-name">Bygge</div>
+              <div class="phase-tag">Leveranse</div>
+            </div>
+            <div class="phase-desc">Lever løsning iterativt med måling av effekt.</div>
+            <div class="phase-subs">
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-4)"></div>Lever i små steg — mål effekt etter hvert steg.</div>
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-4)"></div>Discovery stopper ikke her — nye funn kan sende deg tilbake.</div>
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-4)"></div>Hva skaper faktisk verdi for brukeren, og hva er unødvendig?</div>
+            </div>
+          </div>
+          <div class="gate-col">
+            <div class="gate-label">Beslutning</div>
+            <div class="gate-decisions">
+              <div class="decision-chip chip-continue">Fortsett</div>
+              <div class="decision-chip chip-adjust">Juster</div>
+              <div class="decision-chip chip-stop">Stopp</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-connector">
+          <div></div>
+          <div class="connector-body">
+            <span class="connector-arrows">⇅</span>
+            <span class="connector-label">kan gå tilbake</span>
+          </div>
+          <div class="connector-gate"></div>
+        </div>
+
+        <div class="phase-row p5">
+          <div class="phase-number">05</div>
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-name">Forvalte</div>
+              <div class="phase-tag">Drift</div>
+            </div>
+            <div class="phase-desc">Sikre drift, forbedring og gevinstrealisering.</div>
+            <div class="phase-subs">
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-5)"></div>Er vi bevisste på hva produktet koster å drifte — og er det verdt det?</div>
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-5)"></div>Realiseres gevinstene vi antok, eller må vi justere forventningene?</div>
+              <div class="phase-sub"><div class="sub-dot" style="background:var(--phase-5)"></div>Forvalter vi aktivt, eller bare drifter vi på autopilot?</div>
+            </div>
+          </div>
+          <div class="gate-col">
+            <div class="gate-label">Beslutning</div>
+            <div class="gate-decisions">
+              <div class="decision-chip chip-continue">Fortsett</div>
+              <div class="decision-chip chip-adjust">Juster</div>
+              <div class="decision-chip chip-stop">Avslutt</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Pensjonere as side note -->
+    <div class="pensjonere-note">
+      <span class="pensjonere-note-icon">🚪</span>
+      <div>
+        <strong>Pensjonere — et mulig utfall, ikke en obligatorisk fase</strong>
+        Når beslutningen i Forvalte er "Avslutt": planlegg en ryddig utfasing. Hvem berøres, hvordan sikrer vi overgang, og hva tar vi med oss av læring? Avslutt bevisst — dokumenter, kommuniser, frigjør ressurser.
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 + 3: UNDERLAG + GJENNOMGANG -->
+  <div class="two-col">
+
+    <div>
+      <div class="section-title">
+        <span class="section-num">02</span>
+        Felles produktunderlag
+      </div>
+      <div class="underlag-card">
+        <div class="underlag-header">Obligatorisk før beslutning</div>
+        <div class="underlag-items">
+
+          <div class="underlag-item">
+            <div class="underlag-dot"></div>
+            <div class="underlag-item-body">
+              <div class="underlag-item-title">Problem og behov</div>
+              <div class="underlag-subs">
+                <div class="underlag-sub">Hvem opplever problemet, og i hvilken situasjon?</div>
+                <div class="underlag-sub">Hva er konsekvensen hvis problemet ikke løses?</div>
+                <div class="underlag-sub">Hva er kilden til innsikten — antakelse eller evidens?</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="underlag-item">
+            <div class="underlag-dot"></div>
+            <div class="underlag-item-body">
+              <div class="underlag-item-title">Mål og verdi / gevinster</div>
+              <div class="underlag-subs">
+                <div class="underlag-sub">Hva skal være annerledes når vi lykkes?</div>
+                <div class="underlag-sub">For hvem skapes verdien — bruker, organisasjon, samfunn?</div>
+                <div class="underlag-sub">Hvordan vet vi at vi har nådd målet?</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="underlag-item">
+            <div class="underlag-dot"></div>
+            <div class="underlag-item-body">
+              <div class="underlag-item-title">Hypoteser og usikkerhet</div>
+              <div class="underlag-subs">
+                <div class="underlag-sub">Hva tror vi er sant, men ikke har bevist?</div>
+                <div class="underlag-sub">Hva er konsekvensen hvis vi tar feil?</div>
+                <div class="underlag-sub">Hva er viktigst å teste først?</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="underlag-item">
+            <div class="underlag-dot"></div>
+            <div class="underlag-item-body">
+              <div class="underlag-item-title">Løsningsretning(er)</div>
+              <div class="underlag-subs">
+                <div class="underlag-sub">Hvilke alternativer har vi vurdert?</div>
+                <div class="underlag-sub">Hvorfor denne retningen fremfor andre?</div>
+                <div class="underlag-sub">Hva er ikke inkludert, og hvorfor?</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="underlag-item">
+            <div class="underlag-dot"></div>
+            <div class="underlag-item-body">
+              <div class="underlag-item-title">Kostnader og ressurser</div>
+              <div class="underlag-subs">
+                <div class="underlag-sub">Hva krever dette av tid, folk og penger?</div>
+                <div class="underlag-sub">Hva er alternativkostnaden — hva gjør vi ikke for å gjøre dette?</div>
+                <div class="underlag-sub">Er innsatsen proporsjonal med forventet verdi?</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="underlag-item">
+            <div class="underlag-dot"></div>
+            <div class="underlag-item-body">
+              <div class="underlag-item-title">Risiko og avhengigheter</div>
+              <div class="underlag-subs">
+                <div class="underlag-sub">Hva kan gå galt, og hva gjør vi da?</div>
+                <div class="underlag-sub">Hvem eller hva er vi avhengige av utenfor teamet?</div>
+                <div class="underlag-sub">Hva er ikke-håndterbar risiko som kan stoppe oss?</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="underlag-note">
+          Hvert punkt skal inneholde refleksjon, læring og antakelser — ikke bare status.
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">
+        <span class="section-num">03</span>
+        Produktgjennomganger
+      </div>
+      <div class="gjennomgang-card">
+        <div class="gjennomgang-header">Standard agenda</div>
+        <div class="agenda-list">
+          <div class="agenda-item">
+            <div class="agenda-num">01</div>
+            <div class="agenda-text">
+              <strong>Hva har vi lært?</strong>
+              <span>Konkret læring fra siste fase</span>
+            </div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-num">02</div>
+            <div class="agenda-text">
+              <strong>Hva er fortsatt usikkert?</strong>
+              <span>Åpne spørsmål og risiko vi ikke har løst</span>
+            </div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-num">03</div>
+            <div class="agenda-text">
+              <strong>Hva anbefaler vi nå?</strong>
+              <span>Fortsett · Juster · Stopp</span>
+            </div>
+          </div>
+        </div>
+        <div class="principles">
+          <span class="principle-tag">Tverrfaglig deltakelse</span>
+          <span class="principle-tag">Utenfor-blikk</span>
+          <span class="principle-tag">Læring, ikke rapportering</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 4. RETNING & VERDI -->
+  <div class="retning-section">
+    <div class="section-title">
+      <span class="section-num">04</span>
+      Er vi på rett kurs? Skaper vi verdi?
+    </div>
+
+    <div class="retning-top">
+
+      <div class="retning-card rv-retning">
+        <div class="retning-card-header">
+          <span>🧭</span>
+          Kobling til mål og retning
+        </div>
+        <div class="retning-card-body">
+          <div class="sporsmal">
+            <span class="sporsmal-mark">→</span>
+            <div class="sporsmal-text">
+              Understøtter det vi bygger, målet vi skal ha?
+              <em>Tydelig linje fra innsats til overordnet retning</em>
+            </div>
+          </div>
+          <div class="sporsmal">
+            <span class="sporsmal-mark">→</span>
+            <div class="sporsmal-text">
+              Har forutsetningene endret seg siden vi startet?
+              <em>Mål, brukerbehov, prioriteringer eller kontekst</em>
+            </div>
+          </div>
+          <div class="sporsmal">
+            <span class="sporsmal-mark">→</span>
+            <div class="sporsmal-text">
+              Ville vi startet dette i dag, med den kunnskapen vi nå har?
+              <em>Ikke sunk cost — men hva sier læringen?</em>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="retning-card rv-verdi">
+        <div class="retning-card-header">
+          <span>⚖️</span>
+          Skaper vi faktisk verdi?
+        </div>
+        <div class="retning-card-body">
+          <div class="sporsmal">
+            <span class="sporsmal-mark">→</span>
+            <div class="sporsmal-text">
+              Hvem opplever verdi av det vi leverer, og hvordan vet vi det?
+              <em>Ikke antakelser — hva ser vi i praksis?</em>
+            </div>
+          </div>
+          <div class="sporsmal">
+            <span class="sporsmal-mark">→</span>
+            <div class="sporsmal-text">
+              Stemmer de opprinnelige hypotesene om verdi, eller må vi justere?
+              <em>Ærlighet om hva som holder og hva som ikke holder</em>
+            </div>
+          </div>
+          <div class="sporsmal">
+            <span class="sporsmal-mark">→</span>
+            <div class="sporsmal-text">
+              Er innsatsen proporsjonal med verdien vi faktisk skaper?
+              <em>Vurder alternativkostnaden løpende</em>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Exit compact -->
+    <div class="exit-compact">
+      <div class="exit-compact-title">Mulige utfall når kursen vurderes</div>
+      <div class="exit-chip">
+        <div class="exit-chip-dot" style="background:#c07a1a"></div>
+        <div class="exit-chip-text">
+          <strong>Kursendring</strong>
+          <span>Ny retning basert på læring</span>
+        </div>
+      </div>
+      <div class="exit-chip">
+        <div class="exit-chip-dot" style="background:#c0392b"></div>
+        <div class="exit-chip-text">
+          <strong>Stopp</strong>
+          <span>Verdien forsvarer ikke innsatsen</span>
+        </div>
+      </div>
+      <div class="exit-chip">
+        <div class="exit-chip-dot" style="background:#7a8a8a"></div>
+        <div class="exit-chip-text">
+          <strong>Pensjonering</strong>
+          <span>Produktet har tjent sitt formål</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
